@@ -1,0 +1,21 @@
+{
+  "letterMomentWeight": 6.0,
+  "hexLetterWeight": 4.0,
+  "numeralWeight": 4.0,
+  "nextLetterWeight": 1.0,
+  "itemDropWeight": 0.8,
+  "meatDropWeight": 0.6,
+  "boozeDropWeight": 0.6,
+  "foodDropWeight": 0.6,
+  "initiativeWeight": 0.5,
+  "combatWeight": 3.0,
+  "resistanceWeight": 4.9,
+  "powerWeight": 0.5,
+  "damageWeight": 0.4,
+  "negativeClassWeight": -5,
+  "weaponDmgWeight": 0.5,
+  "nakedWeight": 7.4,
+  "verbosityWeight": 1.0,
+  "familiarWeightWeight": 1.0,
+  "autosellWeight": 1.0
+}
