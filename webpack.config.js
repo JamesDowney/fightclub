@@ -4,7 +4,6 @@
 const path = require("path");
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const webpack = require("webpack"); // does this have a purpose? or can it just get deleted?
-const packageData = require("./package.json");
 /* eslint-enable @typescript-eslint/no-var-requires */
 
 module.exports = {
@@ -18,7 +17,7 @@ module.exports = {
   mode: "production",
   devtool: false,
   output: {
-    path: path.resolve(__dirname, "KoLmafia", "scripts", packageData.name),
+    path: path.resolve(__dirname, "KoLmafia", "scripts"),
     filename: "[name].js",
     libraryTarget: "commonjs",
   },
