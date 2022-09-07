@@ -7,7 +7,6 @@ import {
   equip,
   equippedAmount,
   familiarEquipment,
-  fileToBuffer,
   getPower,
   getProperty,
   historicalPrice,
@@ -29,6 +28,28 @@ import {
 } from "kolmafia";
 import { $class, $familiars, $item, $items, $skill, $slot, $slots, get, have, set } from "libram";
 
+const pvpWeights = {
+  letterMomentWeight: 6.0,
+  hexLetterWeight: 4.0,
+  numeralWeight: 4.0,
+  nextLetterWeight: 1.0,
+  itemDropWeight: 0.8,
+  meatDropWeight: 0.6,
+  boozeDropWeight: 0.6,
+  foodDropWeight: 0.6,
+  initiativeWeight: 0.5,
+  combatWeight: 3.0,
+  resistanceWeight: 4.9,
+  powerWeight: 0.5,
+  damageWeight: 0.4,
+  negativeClassWeight: -5,
+  weaponDmgWeight: 0.5,
+  nakedWeight: 7.4,
+  verbosityWeight: 1.0,
+  familiarWeightWeight: 1.0,
+  autosellWeight: 1.0,
+};
+
 //other variables
 let currentLetter: string;
 let nextLetter: string;
@@ -44,41 +65,25 @@ const famList = $familiars``.filter((fam) => have(fam));
 
 const famEquipList = famList.map((fam) => familiarEquipment(fam));
 
-const gearList = $items``.filter(
-  (gear) =>
-    ensureCanEquip(gear) &&
-    $slot`none` !== toSlot(gear) &&
-    !stringModifier(gear, "Modifiers").includes("Unarmed")
-);
+const gearList = $items``
+  .filter(
+    (gear) =>
+      ensureCanEquip(gear) &&
+      canAcquire(gear) &&
+      $slot`none` !== toSlot(gear) &&
+      !stringModifier(gear, "Modifiers").includes("Unarmed")
+  )
+  .sort((gearA, gearB) => {
+    if (valuation(gearA) > valuation(gearB)) return -1;
+    if (valuation(gearA) < valuation(gearB)) return 1;
+    else return 0;
+  });
 
 const buyGear = get("PvP_buyGear", false); // Will auto-buy from mall if below threshold price and better than what you have
 const maxBuyPrice = get("autoBuyPriceLimit"); // Max price that will be considered to auto buy gear if you don't have it
 const topItems = get("PvP_topItems", 10); // Number of items to display in the output lists
 const limitExpensiveDisplay = get("PvP_limitExpensiveDisplay", false); // Set to false to prevent the item outputs from showing items worth [defineExpensive) defineExpensive = get("PvP_defineExpensive") // define amount for value limiter to show 10,000,000 default
 const defineExpensive = get("PvP_defineExpensive", 10000000);
-
-interface weights {
-  letterMomentWeight: number;
-  hexLetterWeight: number;
-  numeralWeight: number;
-  nextLetterWeight: number;
-  itemDropWeight: number;
-  meatDropWeight: number;
-  boozeDropWeight: number;
-  foodDropWeight: number;
-  initiativeWeight: number;
-  combatWeight: number;
-  resistanceWeight: number;
-  powerWeight: number;
-  damageWeight: number;
-  negativeClassWeight: number;
-  weaponDmgWeight: number;
-  nakedWeight: number;
-  verbosityWeight: number;
-  familiarWeightWeight: number;
-  autosellWeight: number;
-}
-const pvpWeights: weights = JSON.parse(fileToBuffer("pvp_weights.json"));
 
 function generateMinigames(): string[] {
   const pvpMinis: string[] = [];
@@ -754,13 +759,7 @@ function gearString(gear: Item) {
 /** loop through gear to find the best one you can get and equip */
 function bestGear(slot: Slot) {
   const adjustedSlot = $slots`acc2, acc3`.includes(slot) ? $slot`acc1` : slot;
-  const slotGear = gearList
-    .filter((gear) => toSlot(gear) === adjustedSlot)
-    .sort((gearA, gearB) => {
-      if (valuation(gearA) > valuation(gearB)) return -1;
-      if (valuation(gearA) < valuation(gearB)) return 1;
-      else return 0;
-    });
+  const slotGear = gearList.filter((gear) => toSlot(gear) === adjustedSlot);
   for (const gear of slotGear) {
     if (booleanModifier(gear, "Single Equip") && equippedAmount(gear) > 0) {
       continue;
@@ -794,13 +793,7 @@ export function main(): void {
   $slots``.forEach((slot) => equip($item`none`, slot));
 
   $slots`hat, back, shirt, weapon, off-hand, pants, acc1, familiar`.forEach((slot) => {
-    const slotGear = gearList
-      .filter((gear) => toSlot(gear) === slot)
-      .sort((gearA, gearB) => {
-        if (valuation(gearA) > valuation(gearB)) return -1;
-        if (valuation(gearA) < valuation(gearB)) return 1;
-        else return 0;
-      });
+    const slotGear = gearList.filter((gear) => toSlot(gear) === slot);
     printHtml(
       `<b>Slot <i>${slot.toString()}</i> items considered: ${
         slotGear.length
@@ -836,13 +829,7 @@ export function main(): void {
     printHtml("<b>Player can dual wield 1-hand weapons.</b>");
   }
 
-  const weaponList = gearList
-    .filter((item) => toSlot(item) === $slot`weapon`)
-    .sort((gearA, gearB) => {
-      if (valuation(gearA) > valuation(gearB)) return -1;
-      if (valuation(gearA) < valuation(gearB)) return 1;
-      else return 0;
-    });
+  const weaponList = gearList.filter((item) => toSlot(item) === $slot`weapon`);
 
   let weaponIndex = 0;
 
@@ -875,13 +862,9 @@ export function main(): void {
       }
     }
   }
-  const offhandList = gearList
-    .filter((item) => toSlot(item) === $slot`off-hand`)
-    .sort((gearA, gearB) => {
-      if (valuation(gearA) > valuation(gearB)) return -1;
-      if (valuation(gearA) < valuation(gearB)) return 1;
-      else return 0;
-    });
+
+  const offhandList = gearList.filter((item) => toSlot(item) === $slot`off-hand`);
+
   for (let i = 0; i < offhandList.length; i++) {
     if (canAcquire(offhandList[i])) {
       bestOffhand = offhandList[i];
@@ -897,16 +880,14 @@ export function main(): void {
     printHtml(`<b>Best Available off-hand:</b> ${gearString(bestOffhand)}`);
     printHtml(stringModifier(bestOffhand, "Modifiers"));
   } else {
-    gearUp; //p($slot[off - hand], secondaryWeapon);
+    gearUp;
     printHtml(`<b>Best 2nd weapon:</b> ${gearString(secondaryWeapon)}`);
     printHtml(stringModifier(secondaryWeapon, "Modifiers"));
   }
+
   bestGear($slot`pants`);
   bestGear($slot`acc1`);
   bestGear($slot`acc2`);
   bestGear($slot`acc3`);
   bestGear($slot`familiar`);
-
-  /*******
-	Snipped familiars********/
 }
