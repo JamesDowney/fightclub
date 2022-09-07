@@ -1,5 +1,5 @@
 ```
-git checkout Loathers/fightclub release
+git checkout loathers/fightclub release
 ```
 
 This is not a script you should use (yet). It's UberPVPOptimizer, translated to TS, with assorted behind the scenes changes.
