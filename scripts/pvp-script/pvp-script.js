@@ -3746,7 +3746,7 @@ function property_get(property, _default) {
 
 function _set(property, value) {
   var stringValue = value === null ? "" : value.toString();
-  setProperty(property, stringValue);
+  (0,external_kolmafia_namespaceObject.setProperty)(property, stringValue);
 }
 
 
@@ -4039,35 +4039,7 @@ function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
 function main_taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 
- // Booleans for each pvp mini
-
-var laconic = false;
-var verbosity = false;
-var egghunt = false;
-var meatlover = false;
-var weaponDamage = false;
-var moarbooze = false;
-var showingInitiative = false;
-var peaceonearth = false;
-var broadResistance = false;
-var coldResistance = false;
-var hotResistance = false;
-var sleazeResistance = false;
-var stenchResistance = false;
-var spookyResistance = false;
-var lightestLoad = false;
-var letterCheck = false;
-var coldDamage = false;
-var hotDamage = false;
-var sleazeDamage = false;
-var stenchDamage = false;
-var spookyDamage = false;
-var leastGear = false;
-var deface = false;
-var nines = false;
-var fooddrop = false;
-var familiarWeight = false;
-var autosell = false; //other variables
+ //other variables
 
 var currentLetter;
 var nextLetter;
@@ -4078,7 +4050,7 @@ var secondaryWeapon; //offhand
 //let tertiaryWeapon: Item; //hand
 
 var bestOffhand;
-var pvpRules = (0,external_kolmafia_namespaceObject.visitUrl)("peevpee.php?place=rules");
+var pvpMinis = generateMinigames();
 var famList = $familiars(main_templateObject || (main_templateObject = main_taggedTemplateLiteral([""]))).filter(fam => have(fam));
 var famEquipList = famList.map(fam => (0,external_kolmafia_namespaceObject.familiarEquipment)(fam));
 var gearList = template_string_$items(main_templateObject2 || (main_templateObject2 = main_taggedTemplateLiteral([""]))).filter(gear => ensureCanEquip(gear) && $slot(main_templateObject3 || (main_templateObject3 = main_taggedTemplateLiteral(["none"]))) !== (0,external_kolmafia_namespaceObject.toSlot)(gear) && !(0,external_kolmafia_namespaceObject.stringModifier)(gear, "Modifiers").includes("Unarmed"));
@@ -4124,6 +4096,259 @@ var familiarWeightWeight = property_get("PvP_familiarWeightWeight", 1.0); // WIP
 
 var autosellWeight = property_get("PvP_autosellWeight", 1.0); // WIP
 
+function generateMinigames() {
+  var _pvpRules$match$, _pvpRules$match;
+
+  var pvpMinis = [];
+  var pvpRules = (0,external_kolmafia_namespaceObject.visitUrl)("peevpee.php?place=rules");
+
+  if (pvpRules.includes("<p><b>Current Season: </b>".concat((0,external_kolmafia_namespaceObject.getProperty)("PvP_Season"), "<br></p>"))) {
+    return property_get("PvP_Minis").split(",");
+  }
+
+  if (pvpRules.includes("Verbosity")) {
+    pvpMinis.push("Verbosity");
+  }
+
+  if (pvpRules.includes("It's a Mystery, Also!")) {
+    if (!pvpMinis.includes("Verbosity")) pvpMinis.push("Verbosity");
+  }
+
+  if (pvpRules.includes("Laconic")) {
+    if (pvpMinis.includes("Verbosity")) {
+      pvpMinis.splice(pvpMinis.indexOf("Verbosity")); // Ignore them.
+    } else {
+      pvpMinis.push("Laconic");
+    }
+  }
+
+  if (pvpRules.includes("Dressed in Rrrags")) {
+    if (pvpMinis.includes("Verbosity")) {
+      pvpMinis.splice(pvpMinis.indexOf("Verbosity")); // Ignore them.
+    } else {
+      pvpMinis.push("Laconic");
+    }
+  }
+
+  if (pvpRules.includes("Outfit Compression")) {
+    if (pvpMinis.includes("Verbosity")) {
+      pvpMinis.splice(pvpMinis.indexOf("Verbosity")); // Ignore them.
+    } else {
+      pvpMinis.push("Laconic");
+    }
+  }
+
+  if (pvpRules.includes("Showing Initiative")) {
+    pvpMinis.push("Showing Initiative");
+  }
+
+  if (pvpRules.includes("Early Shopper")) {
+    if (!pvpMinis.includes("Showing Initiative")) pvpMinis.push("Showing Initiative");
+  }
+
+  if (pvpRules.includes("Peace on Earth")) {
+    pvpMinis.push("Peace on Earth");
+    combatWeight = -combatWeight;
+  }
+
+  if (pvpRules.includes("Sooooper Sneaky")) {
+    if (!pvpMinis.includes("Peace on Earth")) pvpMinis.push("Peace on Earth");
+    combatWeight = -combatWeight;
+  }
+
+  if (pvpRules.includes("Smellin' Like a Stinkin' Rose")) {
+    if (!pvpMinis.includes("Peace on Earth")) pvpMinis.push("Peace on Earth");
+    combatWeight = -combatWeight;
+  }
+
+  if (pvpRules.includes("The Egg Hunt")) {
+    pvpMinis.push("Egg Hunt");
+  }
+
+  if (pvpRules.includes("The Optimal Stat")) {
+    if (!pvpMinis.includes("Egg Hunt")) pvpMinis.push("Egg Hunt");
+  }
+
+  if (pvpRules.includes("Meat Lover")) {
+    pvpMinis.push("Meat Lover");
+  }
+
+  if (pvpRules.includes("Maul Power")) {
+    pvpMinis.push("Weapon Damage");
+  }
+
+  if (pvpRules.includes("Moarrrrrr Booze!")) {
+    pvpMinis.push("Booze Drop");
+  }
+
+  if (pvpRules.includes("New Tastes")) {
+    pvpMinis.push("Food Drop");
+  }
+
+  if (pvpRules.includes("A Nice Cold One")) {
+    if (!pvpMinis.includes("Peace on Earth")) pvpMinis.push("Peace on Earth");
+  }
+
+  if (pvpRules.includes("Holiday Spirit(s)!")) {
+    if (!pvpMinis.includes("Booze Drop")) pvpMinis.push("Booze Drop");
+  }
+
+  if (pvpRules.includes("Thirrrsty forrr Booze")) {
+    if (!pvpMinis.includes("Booze Drop")) pvpMinis.push("Booze Drop");
+  }
+
+  if (pvpRules.includes("Broad Resistance Contest")) {
+    pvpMinis.push("Broad Resistance");
+  }
+
+  if (pvpRules.includes("All Bundled Up")) {
+    pvpMinis.push("Cold Resistance");
+  }
+
+  if (pvpRules.includes("Hibernation Ready")) {
+    if (!pvpMinis.includes("Cold Resistance")) pvpMinis.push("Cold Resistance");
+  }
+  /*******	Future proofed
+  if (pvpRules.includes("TBD")) {
+    pvpMinis.push("Hot Resistance");
+    printHtml("<li>TBD</li>");
+  }
+  if (pvpRules.includes("TBD")) {
+    pvpMinis.push("Sleaze Resistance");
+    printHtml("<li>TBD</li>");
+  }
+  ********/
+
+
+  if (pvpRules.includes("Hold Your Nose")) {
+    pvpMinis.push("Stench Resistance");
+  }
+  /*******	Future proofed
+  if (pvpRules.includes("TBD")) {
+    pvpMinis.push("Spooky Resistance");
+    printHtml("<li>TBD</li>");
+  }
+  if (pvpRules.includes("TBD")) {
+    pvpMinis.push("Cold Damage");
+    printHtml("<li>TBD</li>");
+  }
+  ******/
+
+
+  if (pvpRules.includes("Ready to Melt")) {
+    pvpMinis.push("Hot Damage");
+  }
+
+  if (pvpRules.includes("Fahrenheit 451")) {
+    if (!pvpMinis.includes("Hot Damage")) pvpMinis.push("Hot Damage");
+  }
+
+  if (pvpRules.includes("Hot for Teacher")) {
+    if (!pvpMinis.includes("Hot Damage")) pvpMinis.push("Hot Damage");
+  }
+
+  if (pvpRules.includes("Innuendo Master")) {
+    if (!pvpMinis.includes("Hot Damage")) pvpMinis.push("Hot Damage");
+  }
+  /*******	Future proofed
+  if (pvpRules.includes("TBD")) {
+    pvpMinis.push("Stench Damage");
+    printHtml("<li>TBD</li>");
+  }
+  if (pvpRules.includes("TBD")) {
+    pvpMinis.push("Spooky Damage");
+    printHtml("<li>TBD</li>");
+  }
+  ******/
+
+
+  if (pvpRules.includes("Lightest Load")) {
+    pvpMinis.push("Lightest Load");
+  }
+
+  if (pvpRules.includes("Optimal Dresser")) {
+    if (!pvpMinis.includes("Lightest Load")) pvpMinis.push("Lightest Load");
+  }
+
+  if (pvpRules.includes("Barely Dressed")) {
+    pvpMinis.push("Least Gear");
+  }
+
+  if (pvpRules.includes("Fashion Show")) {
+    if (!pvpMinis.includes("Lightest Load")) pvpMinis.push("Lightest Load");
+    powerWeight = -powerWeight;
+  }
+
+  if (pvpRules.includes("School Pride")) {
+    if (!pvpMinis.includes("Lightest Load")) pvpMinis.push("Lightest Load");
+    powerWeight = -powerWeight;
+  }
+
+  if (pvpRules.includes("Spirit of Noel")) {
+    pvpMinis.push("Letter Check");
+    currentLetter = "L";
+    nextLetter = "L";
+    letterMomentWeight = -letterMomentWeight;
+    nextLetterWeight = 0;
+  }
+
+  if (pvpRules.includes("Spirit Day")) {
+    if (!pvpMinis.includes("Letter Check")) pvpMinis.push("Letter Check");
+    var start = pvpRules.indexOf("It's one of those crazy school spirit days where everyone wears clothes with the letter <b>");
+    currentLetter = pvpRules.substring(start + 91, start + 92); //		currentLetter="X";			//hacky way to force optimizing a letter
+
+    start = pvpRules.indexOf("Changing to <b>");
+    nextLetter = pvpRules.substring(start + 15, start + 16);
+  }
+
+  if (pvpRules.includes("Letter of the Moment")) {
+    if (!pvpMinis.includes("Letter Check")) pvpMinis.push("Letter Check");
+
+    var _start = pvpRules.indexOf("Who has the most <b>");
+
+    currentLetter = pvpRules.substring(_start + 20, _start + 21); //		currentLetter="X";			//hacky way to force optimizing a letter
+
+    _start = pvpRules.indexOf("Changing to <b>");
+    nextLetter = pvpRules.substring(_start + 15, _start + 16);
+  }
+
+  if (pvpRules.includes("ASCII-7 of the moment")) {
+    if (!pvpMinis.includes("Letter Check")) pvpMinis.push("Letter Check");
+
+    var _start2 = pvpRules.indexOf("Who has the most <b>");
+
+    currentLetter = pvpRules.substring(_start2 + 20, _start2 + 21); //		currentLetter="X";			//hacky way to force optimizing a letter
+
+    _start2 = pvpRules.indexOf("Changing to <b>");
+    nextLetter = pvpRules.substring(_start2 + 15, _start2 + 16);
+  }
+
+  if (pvpRules.includes("DEFACE")) {
+    pvpMinis.push("Deface");
+  }
+
+  if (pvpRules.includes("Dressed to the 9s")) {
+    pvpMinis.push("Nines");
+  }
+
+  if (pvpRules.includes("Beast Master")) {
+    pvpMinis.push("Familiar Weight");
+  }
+
+  if (pvpRules.includes("Loot Hunter")) {
+    if (!pvpMinis.includes("Egg Hunt")) pvpMinis.push("Egg Hunt");
+  }
+
+  if (pvpRules.includes("Safari Chic")) {
+    pvpMinis.push("Autosell");
+  }
+
+  var season = (_pvpRules$match$ = (_pvpRules$match = pvpRules.match(/<b>Current Season: <\/b>(.*?)<br \/>/)) === null || _pvpRules$match === void 0 ? void 0 : _pvpRules$match[1]) !== null && _pvpRules$match$ !== void 0 ? _pvpRules$match$ : "0";
+  _set("PvP_Season", season);
+  _set("PvP_Minis", pvpMinis.join());
+  return pvpMinis;
+}
+
 function main_getClass(item) {
   return (0,external_kolmafia_namespaceObject.toClass)((0,external_kolmafia_namespaceObject.stringModifier)(item, "Class"));
 }
@@ -4144,7 +4369,7 @@ function numCount(gear) {
 }
 
 function nameLength(gear) {
-  if (gear === template_string_$item(main_templateObject7 || (main_templateObject7 = main_taggedTemplateLiteral(["none"]))) && laconic) return 23;
+  if (gear === template_string_$item(main_templateObject7 || (main_templateObject7 = main_taggedTemplateLiteral(["none"]))) && pvpMinis.includes("Laconic")) return 23;
   if (gear === template_string_$item(main_templateObject8 || (main_templateObject8 = main_taggedTemplateLiteral(["none"])))) return 0;
   return gear.toString().length;
 }
@@ -4184,50 +4409,50 @@ function numericModifier2(gear, modifier) {
 
 function valuation(gear) {
   var value = 0;
-  if (laconic) value = (23 - nameLength(gear)) * verbosityWeight;else if (verbosity) value = nameLength(gear) * verbosityWeight;
+  if (pvpMinis.includes("Laconic")) value = (23 - nameLength(gear)) * verbosityWeight;else if (pvpMinis.includes("Verbosity")) value = nameLength(gear) * verbosityWeight;
 
-  if (letterCheck) {
+  if (pvpMinis.includes("Letter Check")) {
     value += letterCount(gear, currentLetter) * letterMomentWeight;
     value += letterCount(gear, nextLetter) * nextLetterWeight;
   }
 
-  if (deface) value += hexCount(gear) * hexLetterWeight;
-  if (nines) value += numCount(gear) * numeralWeight;
-  if (egghunt) value += numericModifier2(gear, "Item Drop") * itemDropWeight;
-  if (meatlover) value += numericModifier2(gear, "Meat Drop") * meatDropWeight;
-  if (weaponDamage) value += numericModifier2(gear, "Weapon Damage") * weaponDmgWeight;
-  if (moarbooze) value += numericModifier2(gear, "Booze Drop") * boozeDropWeight;
-  if (fooddrop) value += numericModifier2(gear, "Food Drop") * foodDropWeight;
-  if (showingInitiative) value += numericModifier2(gear, "Initiative") * initiativeWeight;
-  if (peaceonearth) value += numericModifier2(gear, "Combat Rate") * combatWeight;
-  if (broadResistance) value += Math.min(numericModifier2(gear, "Cold Resistance"), Math.min(numericModifier2(gear, "Hot Resistance"), Math.min(numericModifier2(gear, "Spooky Resistance"), Math.min(numericModifier2(gear, "Sleaze Resistance"), numericModifier2(gear, "Stench Resistance"))))) * resistanceWeight;
-  if (coldResistance) value += numericModifier2(gear, "Cold Resistance") * resistanceWeight;
-  if (hotResistance) value += numericModifier2(gear, "Hot Resistance") * resistanceWeight;
-  if (sleazeResistance) value += numericModifier2(gear, "Sleaze Resistance") * resistanceWeight;
-  if (stenchResistance) value += numericModifier2(gear, "Stench Resistance") * resistanceWeight;
-  if (spookyResistance) value += numericModifier2(gear, "Spooky Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Deface")) value += hexCount(gear) * hexLetterWeight;
+  if (pvpMinis.includes("Nines")) value += numCount(gear) * numeralWeight;
+  if (pvpMinis.includes("Egg Hunt")) value += numericModifier2(gear, "Item Drop") * itemDropWeight;
+  if (pvpMinis.includes("Meat Lover")) value += numericModifier2(gear, "Meat Drop") * meatDropWeight;
+  if (pvpMinis.includes("Weapon Damage")) value += numericModifier2(gear, "Weapon Damage") * weaponDmgWeight;
+  if (pvpMinis.includes("Booze Drop")) value += numericModifier2(gear, "Booze Drop") * boozeDropWeight;
+  if (pvpMinis.includes("Food Drop")) value += numericModifier2(gear, "Food Drop") * foodDropWeight;
+  if (pvpMinis.includes("Showing Initiative")) value += numericModifier2(gear, "Initiative") * initiativeWeight;
+  if (pvpMinis.includes("Peace on Earth")) value += numericModifier2(gear, "Combat Rate") * combatWeight;
+  if (pvpMinis.includes("Broad Resistance")) value += Math.min(numericModifier2(gear, "Cold Resistance"), Math.min(numericModifier2(gear, "Hot Resistance"), Math.min(numericModifier2(gear, "Spooky Resistance"), Math.min(numericModifier2(gear, "Sleaze Resistance"), numericModifier2(gear, "Stench Resistance"))))) * resistanceWeight;
+  if (pvpMinis.includes("Cold Resistance")) value += numericModifier2(gear, "Cold Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Hot Resistance")) value += numericModifier2(gear, "Hot Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Sleaze Resistance")) value += numericModifier2(gear, "Sleaze Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Stench Resistance")) value += numericModifier2(gear, "Stench Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Spooky Resistance")) value += numericModifier2(gear, "Spooky Resistance") * resistanceWeight;
 
-  if (coldDamage) {
+  if (pvpMinis.includes("Cold Damage")) {
     value += numericModifier2(gear, "Cold Damage") * damageWeight + numericModifier2(gear, "Cold Spell Damage") * damageWeight;
   }
 
-  if (hotDamage) {
+  if (pvpMinis.includes("Hot Damage")) {
     value += numericModifier2(gear, "Hot Damage") * damageWeight + numericModifier2(gear, "Hot Spell Damage") * damageWeight;
   }
 
-  if (sleazeDamage) {
+  if (pvpMinis.includes("Sleaze Damage")) {
     value += numericModifier2(gear, "Sleaze Damage") * damageWeight + numericModifier2(gear, "Sleaze Spell Damage") * damageWeight;
   }
 
-  if (stenchDamage) {
+  if (pvpMinis.includes("Stench Damage")) {
     value += numericModifier2(gear, "Stench Damage") * damageWeight + numericModifier2(gear, "Stench Spell Damage") * damageWeight;
   }
 
-  if (spookyDamage) {
+  if (pvpMinis.includes("Spooky Damage")) {
     value += numericModifier2(gear, "Spooky Damage") * damageWeight + numericModifier2(gear, "Spooky Spell Damage") * damageWeight;
   }
 
-  if (lightestLoad) {
+  if (pvpMinis.includes("Lightest Load")) {
     switch ((0,external_kolmafia_namespaceObject.toSlot)(gear)) {
       case $slot(main_templateObject12 || (main_templateObject12 = main_taggedTemplateLiteral(["hat"]))):
       case $slot(main_templateObject13 || (main_templateObject13 = main_taggedTemplateLiteral(["shirt"]))):
@@ -4236,8 +4461,8 @@ function valuation(gear) {
     }
   }
 
-  if (familiarWeight) value += numericModifier2(gear, "Familiar Weight") * familiarWeightWeight;
-  if (autosell) value += (0,external_kolmafia_namespaceObject.autosellPrice)(gear) * autosellWeight;
+  if (pvpMinis.includes("Familiar Weight")) value += numericModifier2(gear, "Familiar Weight") * familiarWeightWeight;
+  if (pvpMinis.includes("Autosell")) value += (0,external_kolmafia_namespaceObject.autosellPrice)(gear) * autosellWeight;
   /******
    *
    *Snipped Bjornify and Enthroning here
@@ -4252,47 +4477,47 @@ Not used atm, 2hand gets -23 penality in Laconic for empty offhand, need to test
 
 function valuation2(gear1, gear2) {
   var value = 0;
-  if (laconic) value = 23 - nameLength(gear1) - nameLength(gear2);else if (verbosity) value = nameLength(gear1) + nameLength(gear2);
-  if (letterCheck) value += (letterCount(gear1, currentLetter) + letterCount(gear2, currentLetter)) * letterMomentWeight;
-  if (egghunt) value += (numericModifier2(gear1, "Item Drop") + numericModifier2(gear2, "Item Drop")) * itemDropWeight;
-  if (weaponDamage) value += (numericModifier2(gear1, "Weapon Damage") + numericModifier2(gear2, "Weapon Damage")) * weaponDmgWeight;
-  if (meatlover) value += (numericModifier2(gear1, "Meat Drop") + numericModifier2(gear2, "Meat Drop")) * meatDropWeight;
-  if (moarbooze) value += (numericModifier2(gear1, "Booze Drop") + numericModifier2(gear2, "Booze Drop")) * boozeDropWeight;
-  if (fooddrop) value += (numericModifier2(gear1, "Food Drop") + numericModifier2(gear2, "Booze Drop")) * boozeDropWeight;
-  if (showingInitiative) value += (numericModifier2(gear1, "Initiative") + numericModifier2(gear2, "Initiative")) * initiativeWeight;
-  if (peaceonearth) value += (numericModifier2(gear1, "Combat Rate") + numericModifier2(gear2, "Combat Rate")) * combatWeight;
+  if (pvpMinis.includes("Laconic")) value = 23 - nameLength(gear1) - nameLength(gear2);else if (pvpMinis.includes("Verbosity")) value = nameLength(gear1) + nameLength(gear2);
+  if (pvpMinis.includes("Letter Check")) value += (letterCount(gear1, currentLetter) + letterCount(gear2, currentLetter)) * letterMomentWeight;
+  if (pvpMinis.includes("Egg Hunt")) value += (numericModifier2(gear1, "Item Drop") + numericModifier2(gear2, "Item Drop")) * itemDropWeight;
+  if (pvpMinis.includes("Weapon Damage")) value += (numericModifier2(gear1, "Weapon Damage") + numericModifier2(gear2, "Weapon Damage")) * weaponDmgWeight;
+  if (pvpMinis.includes("Meat Lover")) value += (numericModifier2(gear1, "Meat Drop") + numericModifier2(gear2, "Meat Drop")) * meatDropWeight;
+  if (pvpMinis.includes("Booze Drop")) value += (numericModifier2(gear1, "Booze Drop") + numericModifier2(gear2, "Booze Drop")) * boozeDropWeight;
+  if (pvpMinis.includes("Food Drop")) value += (numericModifier2(gear1, "Food Drop") + numericModifier2(gear2, "Booze Drop")) * boozeDropWeight;
+  if (pvpMinis.includes("Showing Initiative")) value += (numericModifier2(gear1, "Initiative") + numericModifier2(gear2, "Initiative")) * initiativeWeight;
+  if (pvpMinis.includes("Peace on Earth")) value += (numericModifier2(gear1, "Combat Rate") + numericModifier2(gear2, "Combat Rate")) * combatWeight;
 
-  if (broadResistance) {
+  if (pvpMinis.includes("Broad Resistance")) {
     value += Math.min(numericModifier2(gear1, "Cold Resistance"), Math.min(numericModifier2(gear1, "Hot Resistance"), Math.min(numericModifier2(gear1, "Spooky Resistance"), Math.min(numericModifier2(gear1, "Sleaze Resistance"), numericModifier2(gear1, "Stench Resistance"))))) * resistanceWeight + Math.min(numericModifier2(gear2, "Cold Resistance"), Math.min(numericModifier2(gear2, "Hot Resistance"), Math.min(numericModifier2(gear2, "Spooky Resistance"), Math.min(numericModifier2(gear2, "Sleaze Resistance"), numericModifier2(gear2, "Stench Resistance"))))) * resistanceWeight;
   }
 
-  if (coldResistance) value += numericModifier2(gear1, "Cold Resistance") * resistanceWeight;
-  if (hotResistance) value += numericModifier2(gear1, "Hot Resistance") * resistanceWeight;
-  if (sleazeResistance) value += numericModifier2(gear1, "Sleaze Resistance") * resistanceWeight;
-  if (stenchResistance) value += numericModifier2(gear1, "Stench Resistance") * resistanceWeight;
-  if (spookyResistance) value += numericModifier2(gear1, "Spooky Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Cold Resistance")) value += numericModifier2(gear1, "Cold Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Hot Resistance")) value += numericModifier2(gear1, "Hot Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Sleaze Resistance")) value += numericModifier2(gear1, "Sleaze Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Stench Resistance")) value += numericModifier2(gear1, "Stench Resistance") * resistanceWeight;
+  if (pvpMinis.includes("Spooky Resistance")) value += numericModifier2(gear1, "Spooky Resistance") * resistanceWeight;
 
-  if (coldDamage) {
+  if (pvpMinis.includes("Cold Damage")) {
     value += numericModifier2(gear1, "Cold Damage") * damageWeight + numericModifier2(gear1, "Cold Spell Damage") * damageWeight;
     value += numericModifier2(gear2, "Cold Damage") * damageWeight + numericModifier2(gear2, "Cold Spell Damage") * damageWeight;
   }
 
-  if (hotDamage) {
+  if (pvpMinis.includes("Hot Damage")) {
     value += numericModifier2(gear1, "Hot Damage") * damageWeight + numericModifier2(gear1, "Hot Spell Damage") * damageWeight;
     value += numericModifier2(gear2, "Hot Damage") * damageWeight + numericModifier2(gear2, "Hot Spell Damage") * damageWeight;
   }
 
-  if (sleazeDamage) {
+  if (pvpMinis.includes("Sleaze Damage")) {
     value += numericModifier2(gear1, "Sleaze Damage") * damageWeight + numericModifier2(gear1, "Sleaze Spell Damage") * damageWeight;
     value += numericModifier2(gear2, "Sleaze Damage") * damageWeight + numericModifier2(gear2, "Sleaze Spell Damage") * damageWeight;
   }
 
-  if (stenchDamage) {
+  if (pvpMinis.includes("Stench Damage")) {
     value += numericModifier2(gear1, "Stench Damage") * damageWeight + numericModifier2(gear1, "Stench Spell Damage") * damageWeight;
     value += numericModifier2(gear2, "Stench Damage") * damageWeight + numericModifier2(gear2, "Stench Spell Damage") * damageWeight;
   }
 
-  if (spookyDamage) {
+  if (pvpMinis.includes("Spooky Damage")) {
     value += numericModifier2(gear1, "Spooky Damage") * damageWeight + numericModifier2(gear1, "Spooky Spell Damage") * damageWeight;
     value += numericModifier2(gear2, "Spooky Damage") * damageWeight + numericModifier2(gear2, "Spooky Spell Damage") * damageWeight;
   }
@@ -4314,91 +4539,91 @@ function gearUp(slot, gear) {
 
 function gearString(gear) {
   var gearString = "".concat(wikiLink(gear.name), " ");
-  if (laconic || verbosity) gearString += ", ".concat(nameLength(gear), " chars");
-  if (letterCheck && letterCount(gear, currentLetter) > 0) gearString += ", ".concat(letterCount(gear, currentLetter), " letter ").concat(currentLetter);
-  if (egghunt && numericModifier2(gear, "Item Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Item Drop"), "% Item Drop");
-  if (meatlover && numericModifier2(gear, "Meat Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Meat Drop"), "% Meat Drop");
-  if (moarbooze && numericModifier2(gear, "Booze Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Booze Drop"), "% Booze Drop");
-  if (fooddrop && numericModifier2(gear, "Food Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Food Drop"), "% Food Drop");
-  if (weaponDamage && numericModifier2(gear, "Weapon Damage") > 0) gearString += ", +".concat(numericModifier2(gear, "Weapon Damage"), " Weapon Damage");
-  if (showingInitiative && numericModifier2(gear, "Initiative") > 0) gearString += ", +".concat(numericModifier2(gear, "Initiative"), "% Initiative");
-  if (peaceonearth && numericModifier2(gear, "Combat Rate") > 0) gearString += ", +".concat(numericModifier2(gear, "Combat Rate"), "% Combat");
+  if (pvpMinis.includes("Laconic") || pvpMinis.includes("Verbosity")) gearString += ", ".concat(nameLength(gear), " chars");
+  if (pvpMinis.includes("Letter Check") && letterCount(gear, currentLetter) > 0) gearString += ", ".concat(letterCount(gear, currentLetter), " letter ").concat(currentLetter);
+  if (pvpMinis.includes("Egg Hunt") && numericModifier2(gear, "Item Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Item Drop"), "% Item Drop");
+  if (pvpMinis.includes("Meat Lover") && numericModifier2(gear, "Meat Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Meat Drop"), "% Meat Drop");
+  if (pvpMinis.includes("Booze Drop") && numericModifier2(gear, "Booze Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Booze Drop"), "% Booze Drop");
+  if (pvpMinis.includes("Food Drop") && numericModifier2(gear, "Food Drop") > 0) gearString += ", +".concat(numericModifier2(gear, "Food Drop"), "% Food Drop");
+  if (pvpMinis.includes("Weapon Damage") && numericModifier2(gear, "Weapon Damage") > 0) gearString += ", +".concat(numericModifier2(gear, "Weapon Damage"), " Weapon Damage");
+  if (pvpMinis.includes("Showing Initiative") && numericModifier2(gear, "Initiative") > 0) gearString += ", +".concat(numericModifier2(gear, "Initiative"), "% Initiative");
+  if (pvpMinis.includes("Peace on Earth") && numericModifier2(gear, "Combat Rate") > 0) gearString += ", +".concat(numericModifier2(gear, "Combat Rate"), "% Combat");
 
-  if (broadResistance) {
+  if (pvpMinis.includes("Broad Resistance")) {
     var resist = Math.min(numericModifier2(gear, "Cold Resistance"), Math.min(numericModifier2(gear, "Hot Resistance"), Math.min(numericModifier2(gear, "Spooky Resistance"), Math.min(numericModifier2(gear, "Sleaze Resistance"), numericModifier2(gear, "Stench Resistance")))));
     if (resist > 0) gearString += ", +".concat(resist, " Elemental Resistance");
   }
 
-  if (coldResistance) {
+  if (pvpMinis.includes("Cold Resistance")) {
     var _resist = numericModifier2(gear, "Cold Resistance");
 
     if (_resist > 0) gearString += ", +".concat(_resist, " Elemental Resistance");
   }
 
-  if (hotResistance) {
+  if (pvpMinis.includes("Hot Resistance")) {
     var _resist2 = numericModifier2(gear, "Hot Resistance");
 
     if (_resist2 > 0) gearString += ", +".concat(_resist2, " Elemental Resistance");
   }
 
-  if (sleazeResistance) {
+  if (pvpMinis.includes("Sleaze Resistance")) {
     var _resist3 = numericModifier2(gear, "Sleaze Resistance");
 
     if (_resist3 > 0) gearString += ", +".concat(_resist3, " Elemental Resistance");
   }
 
-  if (stenchResistance) {
+  if (pvpMinis.includes("Stench Resistance")) {
     var _resist4 = numericModifier2(gear, "Stench Resistance");
 
     if (_resist4 > 0) gearString += ", +".concat(_resist4, " Elemental Resistance");
   }
 
-  if (spookyResistance) {
+  if (pvpMinis.includes("Spooky Resistance")) {
     var _resist5 = numericModifier2(gear, "Spooky Resistance");
 
     if (_resist5 > 0) gearString += ", +".concat(_resist5, " Elemental Resistance");
   }
 
-  if (coldDamage) {
+  if (pvpMinis.includes("Cold Damage")) {
     var damage = numericModifier2(gear, "Cold Damage") + numericModifier2(gear, "Cold Spell Damage");
     if (damage > 0) gearString += ", +".concat(damage, " Cold Damage");
   }
 
-  if (hotDamage) {
+  if (pvpMinis.includes("Hot Damage")) {
     var _damage = numericModifier2(gear, "Hot Damage") + numericModifier2(gear, "Hot Spell Damage");
 
     if (_damage > 0) gearString += ", +".concat(_damage, " Hot Damage");
   }
 
-  if (sleazeDamage) {
+  if (pvpMinis.includes("Sleaze Damage")) {
     var _damage2 = numericModifier2(gear, "Sleaze Damage") + numericModifier2(gear, "Sleaze Spell Damage");
 
     if (_damage2 > 0) gearString += ", +".concat(_damage2, " Sleaze Damage");
   }
 
-  if (stenchDamage) {
+  if (pvpMinis.includes("Stench Damage")) {
     var _damage3 = numericModifier2(gear, "Stench Damage") + numericModifier2(gear, "Stench Spell Damage");
 
     if (_damage3 > 0) gearString += ", +".concat(_damage3, " Stench Damage");
   }
 
-  if (spookyDamage) {
+  if (pvpMinis.includes("Spooky Damage")) {
     var _damage4 = numericModifier2(gear, "Spooky Damage") + numericModifier2(gear, "Spooky Spell Damage");
 
     if (_damage4 > 0) gearString += ", +".concat(_damage4, " Spooky Damage");
   }
 
-  if (autosell) {
+  if (pvpMinis.includes("Autosell")) {
     var price = (0,external_kolmafia_namespaceObject.autosellPrice)(gear);
     gearString += ", autosells for ".concat(price, " meat");
   }
 
-  if (autosell) {
+  if (pvpMinis.includes("Familiar Weight")) {
     var famWeight = numericModifier2(gear, "Familiar Weight");
     gearString += ", +".concat(famWeight, " Familiar Weight");
   }
 
-  if (lightestLoad && $slots(main_templateObject15 || (main_templateObject15 = main_taggedTemplateLiteral(["hat, pants, shirt"]))).includes((0,external_kolmafia_namespaceObject.toSlot)(gear))) gearString += ", Power: ".concat((0,external_kolmafia_namespaceObject.getPower)(gear));
+  if (pvpMinis.includes("Lightest Load") && $slots(main_templateObject15 || (main_templateObject15 = main_taggedTemplateLiteral(["hat, pants, shirt"]))).includes((0,external_kolmafia_namespaceObject.toSlot)(gear))) gearString += ", Power: ".concat((0,external_kolmafia_namespaceObject.getPower)(gear));
   if ((0,external_kolmafia_namespaceObject.availableAmount)(gear) > 0) gearString += ", owned by player";else if ((0,external_kolmafia_namespaceObject.npcPrice)(gear) > 0) gearString += ", for sale by npc for ".concat((0,external_kolmafia_namespaceObject.npcPrice)(gear));else if ((0,external_kolmafia_namespaceObject.historicalPrice)(gear) > 0) gearString += ", for sale in  the mall for ".concat((0,external_kolmafia_namespaceObject.historicalPrice)(gear));
   gearString += ", value: ".concat(valuation(gear));
   return gearString;
@@ -4429,7 +4654,7 @@ function bestGear(slot) {
       } //try to handle Barely Dressed mini
 
 
-      if (leastGear && valuation(gear) < nakedWeight) {
+      if (pvpMinis.includes("Least Gear") && valuation(gear) < nakedWeight) {
         (0,external_kolmafia_namespaceObject.printHtml)("<b>Best Available ".concat(slot.toString(), ":</b> ") + "None, value: ".concat(nakedWeight));
         break;
       } //this simultaneously checks if a piece can be equipped and tries to do so
@@ -4450,288 +4675,7 @@ function bestGear(slot) {
 
 function main() {
   (0,external_kolmafia_namespaceObject.print)("pvp-script is a TS continuation of UberPvPOptimizer");
-
-  if (pvpRules.includes("Verbosity")) {
-    verbosity = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Verbosity Demonstration</li>");
-  }
-
-  if (pvpRules.includes("It's a Mystery, Also!")) {
-    verbosity = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>It's a Mystery, Also!</li>");
-  }
-
-  if (pvpRules.includes("Laconic")) {
-    if (verbosity) {
-      verbosity = false; // Ignore them.
-    } else {
-      laconic = true;
-      (0,external_kolmafia_namespaceObject.printHtml)("<li>Laconic Dresser</li>");
-    }
-  }
-
-  if (pvpRules.includes("Dressed in Rrrags")) {
-    if (verbosity) {
-      verbosity = false; // Ignore them.
-    } else {
-      laconic = true;
-      (0,external_kolmafia_namespaceObject.printHtml)("<li>Laconic Dresser</li>");
-    }
-  }
-
-  if (pvpRules.includes("Outfit Compression")) {
-    if (verbosity) {
-      verbosity = false; // Ignore them.
-    } else {
-      laconic = true;
-      (0,external_kolmafia_namespaceObject.printHtml)("<li>Outfit Compression</li>");
-    }
-  }
-
-  if (pvpRules.includes("Showing Initiative")) {
-    showingInitiative = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Showing Initiative</li>");
-  }
-
-  if (pvpRules.includes("Early Shopper")) {
-    showingInitiative = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Early Shopper</li>");
-  }
-
-  if (pvpRules.includes("Peace on Earth")) {
-    peaceonearth = true;
-    combatWeight = -combatWeight;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Peace on Earth</li>");
-  }
-
-  if (pvpRules.includes("Sooooper Sneaky")) {
-    peaceonearth = true;
-    combatWeight = -combatWeight;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Sooooper Sneaky</li>");
-  }
-
-  if (pvpRules.includes("Smellin' Like a Stinkin' Rose")) {
-    peaceonearth = true;
-    combatWeight = -combatWeight;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Smellin' Like a Stinkin' Rose</li>");
-  }
-
-  if (pvpRules.includes("The Egg Hunt")) {
-    egghunt = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>The Egg Hunt</li>");
-  }
-
-  if (pvpRules.includes("The Optimal Stat")) {
-    egghunt = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>The Optimal Stat</li>");
-  }
-
-  if (pvpRules.includes("Meat Lover")) {
-    meatlover = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Meat Lover</li>");
-  }
-
-  if (pvpRules.includes("Maul Power")) {
-    weaponDamage = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Maul Power</li>");
-  }
-
-  if (pvpRules.includes("Moarrrrrr Booze!")) {
-    moarbooze = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Moarrrrrr Booze!</li>");
-  }
-
-  if (pvpRules.includes("New Tastes")) {
-    fooddrop = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>New Tastes</li>");
-  }
-
-  if (pvpRules.includes("A Nice Cold One")) {
-    moarbooze = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>A Nice Cold One</li>");
-  }
-
-  if (pvpRules.includes("Holiday Spirit(s)!")) {
-    moarbooze = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Moarrr Booze!</li>");
-  }
-
-  if (pvpRules.includes("Thirrrsty forrr Booze")) {
-    moarbooze = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Thirrrsty forrr Booze</li>");
-  }
-
-  if (pvpRules.includes("Broad Resistance Contest")) {
-    broadResistance = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Broad Resistance Contest</li>");
-  }
-
-  if (pvpRules.includes("All Bundled Up")) {
-    coldResistance = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>All Bundled Up</li>");
-  }
-
-  if (pvpRules.includes("Hibernation Ready")) {
-    coldResistance = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Hibernation Ready</li>");
-  }
-  /*******	Future proofed
-  if (pvpRules.includes("TBD")) {
-  hotResistance = true;
-  printHtml("<li>TBD</li>");
-  }
-  if (pvpRules.includes("TBD")) {
-  sleazeResistance = true;
-  printHtml("<li>TBD</li>");
-  }
-  ********/
-
-
-  if (pvpRules.includes("Hold Your Nose")) {
-    stenchResistance = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Hold Your Nose</li>");
-  }
-  /*******	Future proofed
-  if (pvpRules.includes("TBD")) {
-  spookyResistance = true;
-  printHtml("<li>TBD</li>");
-  }
-  if (pvpRules.includes("TBD")) {
-  coldDamage = true;
-  printHtml("<li>TBD</li>");
-  }
-  ******/
-
-
-  if (pvpRules.includes("Ready to Melt")) {
-    hotDamage = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Ready to Melt</li>");
-  }
-
-  if (pvpRules.includes("Fahrenheit 451")) {
-    hotDamage = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Fahrenheit 451</li>");
-  }
-
-  if (pvpRules.includes("Hot for Teacher")) {
-    hotDamage = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Hot for Teacher</li>");
-  }
-
-  if (pvpRules.includes("Innuendo Master")) {
-    sleazeDamage = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Innuendo Master</li>");
-  }
-  /*******	Future proofed
-  if (pvpRules.includes("TBD")) {
-  stenchDamage = true;
-  printHtml("<li>TBD</li>");
-  }
-  if (pvpRules.includes("TBD")) {
-  spookyDamage = true;
-  printHtml("<li>TBD</li>");
-  }
-  ******/
-
-
-  if (pvpRules.includes("Lightest Load")) {
-    lightestLoad = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Lightest Load</li>");
-  }
-
-  if (pvpRules.includes("Optimal Dresser")) {
-    lightestLoad = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Optimal Dresser</li>");
-  }
-
-  if (pvpRules.includes("Barely Dressed")) {
-    leastGear = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Barely Dressed</li>");
-  }
-
-  if (pvpRules.includes("Fashion Show")) {
-    lightestLoad = true;
-    powerWeight = -powerWeight;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Fashion Show</li>");
-  }
-
-  if (pvpRules.includes("School Pride")) {
-    lightestLoad = true;
-    powerWeight = -powerWeight;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>School Pride</li>");
-  }
-
-  if (pvpRules.includes("Spirit of Noel")) {
-    letterCheck = true;
-    currentLetter = "L";
-    nextLetter = "L";
-    letterMomentWeight = -letterMomentWeight;
-    nextLetterWeight = 0;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Spirit of Noel</li>");
-  }
-
-  if (pvpRules.includes("Spirit Day")) {
-    letterCheck = true;
-    var start = pvpRules.indexOf("It's one of those crazy school spirit days where everyone wears clothes with the letter <b>");
-    currentLetter = pvpRules.substring(start + 91, start + 92); //		currentLetter="X";			//hacky way to force optimizing a letter
-
-    start = pvpRules.indexOf("Changing to <b>");
-    nextLetter = pvpRules.substring(start + 15, start + 16);
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Spirit Day: ".concat(currentLetter, ", next ").concat(nextLetter, " </li>"));
-  }
-
-  if (pvpRules.includes("Letter of the Moment")) {
-    letterCheck = true;
-
-    var _start = pvpRules.indexOf("Who has the most <b>");
-
-    currentLetter = pvpRules.substring(_start + 20, _start + 21); //		currentLetter="X";			//hacky way to force optimizing a letter
-
-    _start = pvpRules.indexOf("Changing to <b>");
-    nextLetter = pvpRules.substring(_start + 15, _start + 16);
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Letter of the Moment: ".concat(currentLetter, ", next ").concat(nextLetter, " </li>"));
-  }
-
-  if (pvpRules.includes("ASCII-7 of the moment")) {
-    letterCheck = true;
-
-    var _start2 = pvpRules.indexOf("Who has the most <b>");
-
-    currentLetter = pvpRules.substring(_start2 + 20, _start2 + 21); //		currentLetter="X";			//hacky way to force optimizing a letter
-
-    _start2 = pvpRules.indexOf("Changing to <b>");
-    nextLetter = pvpRules.substring(_start2 + 15, _start2 + 16);
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>ASCII-7 of the moment: ".concat(currentLetter, ", next ").concat(nextLetter, " </li>"));
-  }
-
-  if (pvpRules.includes("DEFACE")) {
-    deface = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>DEFACE</li>");
-  }
-
-  if (pvpRules.includes("Dressed to the 9s")) {
-    nines = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Dressed to the 9s</li>");
-  }
-
-  if (pvpRules.includes("Beast Master")) {
-    familiarWeight = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Beast Master</li>");
-  }
-
-  if (pvpRules.includes("Loot Hunter")) {
-    egghunt = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Loot Hunter</li>");
-  }
-
-  if (pvpRules.includes("Safari Chic")) {
-    autosell = true;
-    (0,external_kolmafia_namespaceObject.printHtml)("<li>Safari Chic</li>");
-  }
-
-  (0,external_kolmafia_namespaceObject.printHtml)("</ul>");
   $slots(main_templateObject19 || (main_templateObject19 = main_taggedTemplateLiteral([""]))).forEach(slot => (0,external_kolmafia_namespaceObject.equip)(template_string_$item(main_templateObject20 || (main_templateObject20 = main_taggedTemplateLiteral(["none"]))), slot));
-  (0,external_kolmafia_namespaceObject.printHtml)("<br/>");
   $slots(main_templateObject21 || (main_templateObject21 = main_taggedTemplateLiteral(["hat, back, shirt, weapon, off-hand, pants, acc1, familiar"]))).forEach(slot => {
     var slotGear = gearList.filter(gear => (0,external_kolmafia_namespaceObject.toSlot)(gear) === slot).sort((gearA, gearB) => {
       if (valuation(gearA) > valuation(gearB)) return -1;
