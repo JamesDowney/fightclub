@@ -1,5 +1,5 @@
 ```
-git checkout JamesDowney/pvp-script
+git checkout JamesDowney/pvp-script release
 ```
 
 This is not a script you should use (yet). It's UberPVPOptimizer, translated to TS, with assorted behind the scenes changes.
