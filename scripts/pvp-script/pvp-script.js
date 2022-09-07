@@ -4039,7 +4039,28 @@ function main_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
 function main_taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 
- //other variables
+
+var pvpWeights = {
+  letterMomentWeight: 6.0,
+  hexLetterWeight: 4.0,
+  numeralWeight: 4.0,
+  nextLetterWeight: 1.0,
+  itemDropWeight: 0.8,
+  meatDropWeight: 0.6,
+  boozeDropWeight: 0.6,
+  foodDropWeight: 0.6,
+  initiativeWeight: 0.5,
+  combatWeight: 3.0,
+  resistanceWeight: 4.9,
+  powerWeight: 0.5,
+  damageWeight: 0.4,
+  negativeClassWeight: -5,
+  weaponDmgWeight: 0.5,
+  nakedWeight: 7.4,
+  verbosityWeight: 1.0,
+  familiarWeightWeight: 1.0,
+  autosellWeight: 1.0
+}; //other variables
 
 var currentLetter;
 var nextLetter;
@@ -4053,7 +4074,10 @@ var bestOffhand;
 var pvpMinis = generateMinigames();
 var famList = $familiars(main_templateObject || (main_templateObject = main_taggedTemplateLiteral([""]))).filter(fam => have(fam));
 var famEquipList = famList.map(fam => (0,external_kolmafia_namespaceObject.familiarEquipment)(fam));
-var gearList = template_string_$items(main_templateObject2 || (main_templateObject2 = main_taggedTemplateLiteral([""]))).filter(gear => ensureCanEquip(gear) && $slot(main_templateObject3 || (main_templateObject3 = main_taggedTemplateLiteral(["none"]))) !== (0,external_kolmafia_namespaceObject.toSlot)(gear) && !(0,external_kolmafia_namespaceObject.stringModifier)(gear, "Modifiers").includes("Unarmed"));
+var gearList = template_string_$items(main_templateObject2 || (main_templateObject2 = main_taggedTemplateLiteral([""]))).filter(gear => ensureCanEquip(gear) && canAcquire(gear) && $slot(main_templateObject3 || (main_templateObject3 = main_taggedTemplateLiteral(["none"]))) !== (0,external_kolmafia_namespaceObject.toSlot)(gear) && !(0,external_kolmafia_namespaceObject.stringModifier)(gear, "Modifiers").includes("Unarmed")).sort((gearA, gearB) => {
+  if (valuation(gearA) > valuation(gearB)) return -1;
+  if (valuation(gearA) < valuation(gearB)) return 1;else return 0;
+});
 var buyGear = property_get("PvP_buyGear", false); // Will auto-buy from mall if below threshold price and better than what you have
 
 var maxBuyPrice = property_get("autoBuyPriceLimit"); // Max price that will be considered to auto buy gear if you don't have it
@@ -4063,7 +4087,6 @@ var topItems = property_get("PvP_topItems", 10); // Number of items to display i
 var limitExpensiveDisplay = property_get("PvP_limitExpensiveDisplay", false); // Set to false to prevent the item outputs from showing items worth [defineExpensive) defineExpensive = get("PvP_defineExpensive") // define amount for value limiter to show 10,000,000 default
 
 var defineExpensive = property_get("PvP_defineExpensive", 10000000);
-var pvpWeights = JSON.parse((0,external_kolmafia_namespaceObject.fileToBuffer)("pvp_weights.json"));
 
 function generateMinigames() {
   var _pvpRules$match$, _pvpRules$match;
@@ -4606,10 +4629,7 @@ function gearString(gear) {
 
 function bestGear(slot) {
   var adjustedSlot = $slots(main_templateObject16 || (main_templateObject16 = main_taggedTemplateLiteral(["acc2, acc3"]))).includes(slot) ? $slot(main_templateObject17 || (main_templateObject17 = main_taggedTemplateLiteral(["acc1"]))) : slot;
-  var slotGear = gearList.filter(gear => (0,external_kolmafia_namespaceObject.toSlot)(gear) === adjustedSlot).sort((gearA, gearB) => {
-    if (valuation(gearA) > valuation(gearB)) return -1;
-    if (valuation(gearA) < valuation(gearB)) return 1;else return 0;
-  });
+  var slotGear = gearList.filter(gear => (0,external_kolmafia_namespaceObject.toSlot)(gear) === adjustedSlot);
 
   var _iterator = main_createForOfIteratorHelper(slotGear),
       _step;
@@ -4646,10 +4666,7 @@ function main() {
   (0,external_kolmafia_namespaceObject.print)("pvp-script is a TS continuation of UberPvPOptimizer");
   $slots(main_templateObject19 || (main_templateObject19 = main_taggedTemplateLiteral([""]))).forEach(slot => (0,external_kolmafia_namespaceObject.equip)(template_string_$item(main_templateObject20 || (main_templateObject20 = main_taggedTemplateLiteral(["none"]))), slot));
   $slots(main_templateObject21 || (main_templateObject21 = main_taggedTemplateLiteral(["hat, back, shirt, weapon, off-hand, pants, acc1, familiar"]))).forEach(slot => {
-    var slotGear = gearList.filter(gear => (0,external_kolmafia_namespaceObject.toSlot)(gear) === slot).sort((gearA, gearB) => {
-      if (valuation(gearA) > valuation(gearB)) return -1;
-      if (valuation(gearA) < valuation(gearB)) return 1;else return 0;
-    });
+    var slotGear = gearList.filter(gear => (0,external_kolmafia_namespaceObject.toSlot)(gear) === slot);
     (0,external_kolmafia_namespaceObject.printHtml)("<b>Slot <i>".concat(slot.toString(), "</i> items considered: ").concat(slotGear.length, " printing top items in slot:</b>"));
 
     if (limitExpensiveDisplay) {
@@ -4682,10 +4699,7 @@ function main() {
     (0,external_kolmafia_namespaceObject.printHtml)("<b>Player can dual wield 1-hand weapons.</b>");
   }
 
-  var weaponList = gearList.filter(item => (0,external_kolmafia_namespaceObject.toSlot)(item) === $slot(main_templateObject26 || (main_templateObject26 = main_taggedTemplateLiteral(["weapon"])))).sort((gearA, gearB) => {
-    if (valuation(gearA) > valuation(gearB)) return -1;
-    if (valuation(gearA) < valuation(gearB)) return 1;else return 0;
-  });
+  var weaponList = gearList.filter(item => (0,external_kolmafia_namespaceObject.toSlot)(item) === $slot(main_templateObject26 || (main_templateObject26 = main_taggedTemplateLiteral(["weapon"]))));
   var weaponIndex = 0;
 
   var _iterator2 = main_createForOfIteratorHelper(weaponList),
@@ -4727,10 +4741,7 @@ function main() {
       _iterator3.f();
     }
   }
-  var offhandList = gearList.filter(item => (0,external_kolmafia_namespaceObject.toSlot)(item) === $slot(main_templateObject28 || (main_templateObject28 = main_taggedTemplateLiteral(["off-hand"])))).sort((gearA, gearB) => {
-    if (valuation(gearA) > valuation(gearB)) return -1;
-    if (valuation(gearA) < valuation(gearB)) return 1;else return 0;
-  });
+  var offhandList = gearList.filter(item => (0,external_kolmafia_namespaceObject.toSlot)(item) === $slot(main_templateObject28 || (main_templateObject28 = main_taggedTemplateLiteral(["off-hand"]))));
 
   for (var i = 0; i < offhandList.length; i++) {
     if (canAcquire(offhandList[i])) {
@@ -4744,8 +4755,7 @@ function main() {
     (0,external_kolmafia_namespaceObject.printHtml)("<b>Best Available off-hand:</b> ".concat(gearString(bestOffhand)));
     (0,external_kolmafia_namespaceObject.printHtml)((0,external_kolmafia_namespaceObject.stringModifier)(bestOffhand, "Modifiers"));
   } else {
-    gearUp; //p($slot[off - hand], secondaryWeapon);
-
+    gearUp;
     (0,external_kolmafia_namespaceObject.printHtml)("<b>Best 2nd weapon:</b> ".concat(gearString(secondaryWeapon)));
     (0,external_kolmafia_namespaceObject.printHtml)((0,external_kolmafia_namespaceObject.stringModifier)(secondaryWeapon, "Modifiers"));
   }
@@ -4755,8 +4765,6 @@ function main() {
   bestGear($slot(main_templateObject32 || (main_templateObject32 = main_taggedTemplateLiteral(["acc2"]))));
   bestGear($slot(main_templateObject33 || (main_templateObject33 = main_taggedTemplateLiteral(["acc3"]))));
   bestGear($slot(_templateObject34 || (_templateObject34 = main_taggedTemplateLiteral(["familiar"]))));
-  /*******
-  Snipped familiars********/
 }
 })();
 
