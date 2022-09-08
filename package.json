@@ -40,7 +40,11 @@
     "type": "git",
     "url": "git+https://github.com/loathers/fightclub.git"
   },
-  "keywords": ["KoLMafia", "JS", "TS"],
+  "keywords": [
+    "KoLMafia",
+    "JS",
+    "TS"
+  ],
   "bugs": {
     "url": "https://github.com/loathers/fightclub/issues"
   },
