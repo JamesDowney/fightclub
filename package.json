@@ -1,8 +1,8 @@
 {
-  "name": "pvp-script",
+  "name": "fightclub",
   "version": "1.0.0",
-  "description": "Example package for KoLmafia TypeScript scripts.",
-  "main": "KoLmafia/scripts/pvp-script/pvp-script.js",
+  "description": "Maximizer, but for PvP minigames.",
+  "main": "KoLmafia/scripts/fightclub.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "yarn run build:types && yarn run build:js",
@@ -34,19 +34,15 @@
     "kolmafia": "^4.0.1",
     "libram": "^0.7.1"
   },
-  "author": "Beldur",
+  "author": "loathers",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JamesDowney/pvp-script.git"
+    "url": "git+https://github.com/loathers/fightclub.git"
   },
-  "keywords": [
-    "KoLMafia",
-    "JS",
-    "TS"
-  ],
+  "keywords": ["KoLMafia", "JS", "TS"],
   "bugs": {
-    "url": "https://github.com/JamesDowney/pvp-script/issues"
+    "url": "https://github.com/loathers/fightclub/issues"
   },
-  "homepage": "https://github.com/JamesDowney/pvp-script#readme"
+  "homepage": "https://github.com/loathers/fightclub#readme"
 }

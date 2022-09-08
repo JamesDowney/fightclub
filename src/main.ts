@@ -3,7 +3,7 @@ import { $item, $slot, $slots } from "libram";
 import { bestGear, bestHands, displayTopItems } from "./lib";
 
 export function main(): void {
-  print("pvp-script is a TS continuation of UberPvPOptimizer");
+  print("fightclub is a TS continuation of UberPvPOptimizer");
   $slots``.forEach((slot) => equip($item`none`, slot));
   displayTopItems();
   bestGear($slot`hat`);
