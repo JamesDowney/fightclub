@@ -49,7 +49,6 @@ const pvpWeights = {
   autosellWeight: 1.0,
 };
 
-//other variables
 let currentLetter: string;
 let nextLetter: string;
 
@@ -60,17 +59,8 @@ const famList = $familiars``.filter((fam) => have(fam));
 const famEquipList = famList.map((fam) => familiarEquipment(fam));
 
 const gearList = $items``
-  .filter(
-    (gear) =>
-      ensureCanEquip(gear) &&
-      $slot`none` !== toSlot(gear) &&
-      !stringModifier(gear, "Modifiers").includes("Unarmed")
-  )
-  .sort((gearA, gearB) => {
-    if (valuation(gearA) > valuation(gearB)) return -1;
-    if (valuation(gearA) < valuation(gearB)) return 1;
-    else return 0;
-  });
+  .filter((gear) => ensureCanEquip(gear) && !stringModifier(gear, "Modifiers").includes("Unarmed"))
+  .sort((gearA, gearB) => valuation(gearB) - valuation(gearA));
 
 const buyGear = get("PvP_buyGear", false); // Will auto-buy from mall if below threshold price and better than what you have
 const maxBuyPrice = get("autoBuyPriceLimit"); // Max price that will be considered to auto buy gear if you don't have it
